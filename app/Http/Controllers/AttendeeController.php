@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers;
 
 use App\Imports\AttendeesImport;
@@ -16,60 +17,58 @@ class AttendeeController extends Controller
      * Display a listing of the resource.
      */
     public function index()
-{
-    $max_view = 10;
+    {
+        $max_view = 10;
 
-    $user = auth()->user(); // Get the authenticated user
+        $user = auth()->user(); // Get the authenticated user
 
-    if ($user->role == 'admin') {
-        // Admin can see all events, even pending ones
-        $attendees = Attendee::with('event')->paginate($max_view); // Eager load 'event'
-        return view('admin.events.index', compact('events'));
+        if ($user->role == 'admin') {
+            // Admin can see all events, even pending ones
+            $attendees = Attendee::with('event')->paginate($max_view); // Eager load 'event'
+            return view('admin.events.index', compact('events'));
+        } elseif ($user->role == 'organizer') {
+            // Organizer can only see their own events
+            $attendees = Attendee::where('user_id', $user->id)->with('event')->paginate($max_view); // Eager load 'event'
+            return view('organizer.attendees.index', compact('attendees'));
+        } else {
+            // Handle the case for a regular user if needed
+            $attendees = [];
+        }
 
-    } elseif ($user->role == 'organizer') {
-        // Organizer can only see their own events
-        $attendees = Attendee::where('user_id', $user->id)->with('event')->paginate($max_view); // Eager load 'event'
-        return view('organizer.attendees.index', compact('attendees'));
-
-    } else {
-        // Handle the case for a regular user if needed
-        $attendees = [];
+        return abort(401);
     }
 
-    return abort(401);
-}
 
+    /**
+     * Search attendees based on query.
+     */
+    public function search(Request $request)
+    {
+        // Get the search query
+        $searchQuery = $request->input('search');
 
+        // Fetch attendees matching the search query
+        // Searching in attendee name, email, phone number, and event name
+        $attendees = Attendee::where('name', 'LIKE', "%{$searchQuery}%")
+            ->orWhere('email', 'LIKE', "%{$searchQuery}%")
+            ->orWhere('seat_category', 'LIKE', "%{$searchQuery}%")
+            ->orWhere('phone_number', 'LIKE', "%{$searchQuery}%")
+            ->orWhereHas('event', function ($query) use ($searchQuery) {
+                $query->where('name', 'LIKE', "%{$searchQuery}%");
+            })
+            ->paginate(10); // Paginate results
 
-//     public function searchAttendees(Request $request)
-// {
-//     // Get the search query from the request
-//     $query = $request->input('q');
+        // Check if request is AJAX
+        if ($request->ajax()) {
+            return response()->json([
+                'attendees' => $attendees->items(), // Return only the attendees array
+            ]);
+        }
 
-//     // Filter attendees based on the search query
-//     $attendees = Attendee::with('event')
-//         ->where('name', 'like', '%' . $query . '%')
-//         ->orWhere('email', 'like', '%' . $query . '%')
-//         ->get();
+        // Return to the attendees page with the search results
+        return view('organizer.attendees.index', compact('attendees'));
+    }
 
-//     // Prepare the response data
-//     $attendeesData = $attendees->map(function ($attendee) {
-//         return [
-//             'event_name' => $attendee->event->name,
-//             'id' => $attendee->id,
-//             'name' => $attendee->name,
-//             'email' => $attendee->email,
-//             'seat_category' => strtoupper($attendee->seat_category),
-//             'rsvp_link' => url('/rsvp/' . $attendee->seat_category . '/' . $attendee->token),
-//             'status' => ucfirst($attendee->status),
-//             'email_sent' => $attendee->email_sent ? 'Yes' : 'No',
-//         ];
-//     });
-
-//     return response()->json([
-//         'attendees' => $attendeesData
-//     ]);
-// }
     /**
      * Show the form for creating a new resource.
      */
@@ -157,54 +156,54 @@ class AttendeeController extends Controller
      * Handle the file import.
      */
 
-public function import(Request $request, $eventId)
-{
-    $request->validate([
-        'file' => 'required|file|mimes:csv,txt,xlsx',
-    ]);
+    public function import(Request $request, $eventId)
+    {
+        $request->validate([
+            'file' => 'required|file|mimes:csv,txt,xlsx',
+        ]);
 
-    $event = Events::findOrFail($eventId);
-    $user = Auth::user();  // Get the authenticated user
+        $event = Events::findOrFail($eventId);
+        $user = Auth::user();  // Get the authenticated user
 
-    $attendees = Excel::toCollection(null, $request->file('file'));
-    $sheet = $attendees->first();
-    $dataRows = $sheet->slice(1);
+        $attendees = Excel::toCollection(null, $request->file('file'));
+        $sheet = $attendees->first();
+        $dataRows = $sheet->slice(1);
 
-    $duplicateEmails = [];  // Array to store emails that were skipped
+        $duplicateEmails = [];  // Array to store emails that were skipped
 
-    foreach ($dataRows as $row) {
-        // Generate a secure token using random_bytes (32-character hexadecimal string)
-        $token = bin2hex(random_bytes(16));  // 16 bytes = 32 characters in hex
+        foreach ($dataRows as $row) {
+            // Generate a secure token using random_bytes (32-character hexadecimal string)
+            $token = bin2hex(random_bytes(16));  // 16 bytes = 32 characters in hex
 
-        // Check if the email already exists
-        $existingAttendee = Attendee::where('email', $row[1])->first();  // Check if email exists
+            // Check if the email already exists
+            $existingAttendee = Attendee::where('email', $row[1])->first();  // Check if email exists
 
-        if ($existingAttendee) {
-            // If the email already exists, log the duplicate and skip inserting
-            $duplicateEmails[] = $row[1];  // Store the duplicated email
-            continue;  // Skip this row and move to the next one
+            if ($existingAttendee) {
+                // If the email already exists, log the duplicate and skip inserting
+                $duplicateEmails[] = $row[1];  // Store the duplicated email
+                continue;  // Skip this row and move to the next one
+            }
+
+            // Insert the attendee data and include the generated token
+            Attendee::create([
+                'name' => $row[0], // First column
+                'email' => $row[1], // Second column
+                'phone_number' => $row[2], // Third column
+                'seat_category' => $row[3], // Fourth column
+                'events_id' => $event->id, // Associate with the event
+                'user_id' => $user->id, // Associate with the authenticated user (organizer)
+                'token' => $token, // Provide the generated token
+            ]);
         }
 
-        // Insert the attendee data and include the generated token
-        Attendee::create([
-            'name' => $row[0], // First column
-            'email' => $row[1], // Second column
-            'phone_number' => $row[2], // Third column
-            'seat_category' => $row[3], // Fourth column
-            'events_id' => $event->id, // Associate with the event
-            'user_id' => $user->id, // Associate with the authenticated user (organizer)
-            'token' => $token, // Provide the generated token
-        ]);
-    }
+        // If there were duplicate emails, generate a message to notify the user
+        if (!empty($duplicateEmails)) {
+            $duplicateEmailsList = implode(', ', $duplicateEmails);  // Join the emails with commas
+            return redirect()->back()->with('warning', "The following emails were duplicated and ignored: $duplicateEmailsList");
+        }
 
-    // If there were duplicate emails, generate a message to notify the user
-    if (!empty($duplicateEmails)) {
-        $duplicateEmailsList = implode(', ', $duplicateEmails);  // Join the emails with commas
-        return redirect()->back()->with('warning', "The following emails were duplicated and ignored: $duplicateEmailsList");
+        return redirect()->back()->with('success', 'Attendees imported successfully!');
     }
-
-    return redirect()->back()->with('success', 'Attendees imported successfully!');
-}
     /**
      * Display the specified resource.
      */
@@ -215,9 +214,6 @@ public function import(Request $request, $eventId)
         $events = Events::findOrFail($id);  // Fetch the event by ID
         $attendees = Attendee::where('events_id', $id)->paginate(10);
         return view('organizer.events.show-attendees', compact('attendees', 'events'));
-
-
-
     }
 
 
@@ -274,7 +270,6 @@ public function import(Request $request, $eventId)
             'vvip_seat_available' => $vvipAvailable,
             'available_seats' => $totalAvailable,
         ]);
-
     }
 
 
@@ -286,8 +281,8 @@ public function import(Request $request, $eventId)
 
         // Get all attendees of the event who haven't received an email yet
         $attendees = Attendee::where('events_id', $eventId)
-                              ->where('email_sent', 'no')
-                              ->get();
+            ->where('email_sent', 'no')
+            ->get();
 
         // Check if there are attendees to send emails to
         if ($attendees->isEmpty()) {

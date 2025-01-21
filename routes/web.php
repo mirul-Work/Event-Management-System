@@ -69,8 +69,7 @@ Route::prefix('organizer')->name('organizer.')->middleware('auth:organizer')->gr
     // Route::resource('attendees', AttendeeController::class);
     //attende controller
     Route::get('/attendees/{user_id}/', [AttendeeController::class, 'index'])->name('attendees.index');
-    // Route::get('/attendees/search', [AttendeeController::class, 'searchAttendees']);
-    Route::get('/events/attendees/{user_id}/', [AttendeeController::class, 'showEventAttendees'])->name('attendees.showEventAttendees');
+    Route::get('/organizer/attendees/search', [AttendeeController::class, 'search'])->name('attendees.search');    Route::get('/events/attendees/{user_id}/', [AttendeeController::class, 'showEventAttendees'])->name('attendees.showEventAttendees');
     Route::delete('/events/attendees/{id}/', [AttendeeController::class, 'destroy'])->name('attendees.destroy');
     Route::get('/events/{event}/attendees/manual', [AttendeeController::class, 'create'])->name('attendees.create');
     Route::post('/organizer/events/{event}/attendees/manual', [AttendeeController::class, 'store'])->name('attendees.store');

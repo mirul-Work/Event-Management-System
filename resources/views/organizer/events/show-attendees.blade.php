@@ -41,7 +41,7 @@
             <a href="{{ route('organizer.attendees.import.form', $events->id) }}" type="submit"
                 class="btn btn-success">Import Attendee</a>
             <a href="{{ route('organizer.attendees.create',$events->id) }}" type="submit"
-                class="btn btn-success">Create Attendee</a>
+                class="btn btn-danger">Create Attendee</a>
         </div>
 
         <div class="overflow-auto bg-white shadow-md rounded-lg">
