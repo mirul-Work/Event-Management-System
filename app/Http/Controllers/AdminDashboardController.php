@@ -117,15 +117,13 @@ class AdminDashboardController extends Controller
         $max_view = 10;
         $search = $request->get('search');
 
-        $organizers = User::when($search, function ($query, $search) {
-            return $query->where('name', 'like', "%$search%")
-                ->orWhere('email', 'like', "%$search%");
-        })->withCount('events')->get();
-
-        // Fetch all users where the role is 'organizer'
-        $organizers = User::where('role', 'organizer') // Assuming 'role' identifies organizers
-            ->withCount('events') // Count the related events
-            ->paginate($max_view);
+        $organizers = User::where('role', 'organizer') // Filter by organizer role
+            ->when($search, function ($query, $search) {
+                return $query->where('name', 'like', "%$search%")
+                             ->orWhere('email', 'like', "%$search%");
+            })
+            ->withCount('events') // Count related events
+            ->paginate($max_view); // Paginate the results
 
         return view('admin.organizers.index', compact('organizers'));
     }
