@@ -17,26 +17,40 @@ use Illuminate\Support\Facades\Validator;
 class EventsController extends Controller
 {
     //show all event index
-    public function index()
-{
-    $max_view = 10;  // Change this to the desired number of events per page
-    $user = auth()->user(); // Get the authenticated user
+    public function index(Request $request)
+    {
+        $max_view = 10; // Number of events per page
+        $user = auth()->user(); // Get the authenticated user
 
-    if ($user->role == 'admin') {
-        // Admin can see all events, even pending ones
-        $events = Events::paginate($max_view); // Apply pagination directly on the query
-        return view('admin.events.index', compact('events'));
+        $query = Events::query();
 
-    } elseif ($user->role == 'organizer') {
-        // Organizer can only see their own events
-        $events = Events::where('user_id', $user->id)->paginate($max_view); // Paginate based on organizer's events
-        return view('organizer.events.index', compact('events'));
+        if ($user->role == 'admin') {
+            // Admin can see all events
+            $query = $query;
+        } elseif ($user->role == 'organizer') {
+            // Organizer sees only their events
+            $query = $query->where('user_id', $user->id);
+        } else {
+            // Handle unauthorized users
+            return abort(403, 'Unauthorized');
+        }
 
-    } else {
-        // Handle the case for a regular user (e.g., redirect them or show an error message)
-        return abort(403, 'Unauthorized'); // Or you could return a custom view or message
+        // Apply search filters
+        if ($request->has('search') && $request->search) {
+            $query->where('name', 'LIKE', '%' . $request->search . '%');
+        }
+
+        if ($request->has('status') && $request->status) {
+            $query->where('status', $request->status);
+        }
+
+        // Paginate the results
+        $events = $query->paginate($max_view);
+
+        // Return the correct view based on the user's role
+        $view = $user->role == 'admin' ? 'admin.events.index' : 'organizer.events.index';
+        return view($view, compact('events'));
     }
-}
 
     // Show the form to create an event
     public function create()

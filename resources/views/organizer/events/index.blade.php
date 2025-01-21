@@ -141,7 +141,9 @@
             </table>
         </div>
         <div class="mt-4">
-            {{ $events->links() }}
+            {{-- {{ $events->links() }} --}}
+            {{ $events->appends(request()->query())->links() }}
+
         </div>
     @endif
 @endsection
