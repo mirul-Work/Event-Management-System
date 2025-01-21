@@ -9,7 +9,7 @@
 
 
 @section('role')
-<p class="text-center font-bold text-gray-700">{{ Auth::user()->name }} </p>
+    <p class="text-center font-bold text-gray-700">{{ Auth::user()->name }} </p>
 @endsection
 @section('side-bar-ul')
 @endsection
@@ -31,6 +31,14 @@
     @if ($events->total() === 0)
         <div class="alert alert-info">No Event Found.{{ session('info') }}</div>
     @else
+        <!-- Search Form -->
+        <div class="mb-3">
+            <form method="GET" action="{{ route('admin.events.index') }}">
+                <input type="text" name="search" class="form-control"
+                    placeholder="Search by Event Name or Organizer Name" value="{{ request('search') }}" />
+            </form>
+        </div>
+
         <div class="overflow-auto bg-white shadow-md rounded-lg ">
 
             <table class="table-auto min-w-full border-collapse border border-gray-200">
@@ -44,7 +52,7 @@
                         <th class="px-4 py-2">Actions</th>
                     </tr>
                 </thead>
-                <tbody  class="divide-y divide-gray-200">
+                <tbody class="divide-y divide-gray-200">
                     @foreach ($events as $event)
                         <tr>
                             <td class="px-4 py-2">{{ $event->name }}</td>
@@ -52,9 +60,10 @@
                             <td class="px-4 py-2">{{ $event->date }}</td>
                             <td class="px-4 py-2">{{ $event->location }}</td>
                             <td class="py-2 px-4">
-                                <span class="px-2 py-1 text-md font-bold
-                                {{ $event->status === 'approved' ? 'text-green-500' : 'text-red-500'}}">
-                                {{ ucfirst($event->status) }}
+                                <span
+                                    class="px-2 py-1 text-md font-bold
+                                {{ $event->status === 'approved' ? 'text-green-500' : 'text-red-500' }}">
+                                    {{ ucfirst($event->status) }}
                                 </span>
                             </td>
                             <td class="px-4 py-2">
@@ -84,8 +93,8 @@
                 </tbody>
             </table>
         </div>
-            <div class="mt-4">
-                {{ $events->links() }}
-            </div>
+        <div class="mt-4">
+            {{ $events->links() }}
+        </div>
     @endif
 @endsection

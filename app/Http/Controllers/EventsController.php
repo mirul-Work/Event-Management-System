@@ -58,44 +58,6 @@ class EventsController extends Controller
         return view('organizer.events.create');
     }
 
-    // Store the new event created by the organizer
-    // public function store(Request $request)
-    // {
-    //     // Validate the request data
-    //     $validatedData = $request->validate([
-    //         'name' => 'required|string|max:255',
-    //         'date' => 'required|after:today|date',
-    //         'location' => 'required|string|max:255',
-    //         'status' => 'required|in:pending', // Only 'pending' status for now
-    //         'regular_seats' => 'required|integer|min:0',
-    //         'vip_seats' => 'required|integer|min:0',
-    //         'vvip_seats' => 'required|integer|min:0',
-    //     ]);
-
-    //     // Calculate total seats
-    //     $totalSeats = $validatedData['vip_seats'] + $validatedData['vvip_seats'];
-
-    //     // Create the event with the total seats
-    //     $event = Events::create([
-    //         'name' => $validatedData['name'],
-    //         'date' => $validatedData['date'],
-    //         'location' => $validatedData['location'],
-    //         'status' => $validatedData['status'],
-    //         'regular_seats' => $validatedData['regular_seats'],
-    //         'vip_seats' => $validatedData['vip_seats'],
-    //         'vvip_seats' => $validatedData['vvip_seats'],
-    //         'total_seats' => $totalSeats, // Store total seats in the database
-    //         'user_id' => auth()->id(), // Ensure the logged-in user is the organizer
-    //     ]);
-
-    //     // Generate Seat Links (Regular, VIP, VVIP)
-    //     // $this->generateSeatLinks($event);
-
-    //     // Flash message for success
-    //     session()->flash('success', 'Event created successfully!');
-
-    //     return redirect()->route('organizer.events.index');
-    // }
 
 
     public function store(Request $request)
