@@ -20,6 +20,8 @@
 
 @section('content-dashboard')
     <h1 class="text-2xl font-bold mb-4 text-gray-800">Total Events: {{ $events->total() }}</h1>
+    <a href="{{ route('organizer.events.create') }}" class="btn btn-sm btn-warning">New
+        Event</a>
 
     {{-- Total Attendees Count --}}
 
@@ -38,8 +40,7 @@
 
     <!-- Add New Event Button and Search Form -->
     <div class="flex flex-wrap items-center justify-between mb-4">
-        <a href="{{ route('organizer.events.create') }}" class="btn btn-sm btn-warning">New
-            Event</a>
+
 
         <!-- Search Form -->
         <form class="d-flex mt-3 md:mt-0" method="GET" action="{{ route('organizer.events.index') }}">

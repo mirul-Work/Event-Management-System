@@ -16,7 +16,10 @@
 
     <!-- RSVP Card -->
     <div class="bg-white shadow-lg rounded-lg p-6 w-full max-w-lg">
-        <h1 class="text-2xl font-bold text-gray-800 mb-4">You already    <span class="text-green-500">{{strtoupper($attendee->status)}}</span>
+        <h1 class="text-2xl font-bold text-gray-800 mb-4">You already   <span class="{{ $attendee->status === 'accepted' ? 'text-green-500' : ($attendee->status === 'rejected' ? 'text-red-500' : 'text-gray-500') }}">
+            {{ strtoupper($attendee->status) }}
+        </span>
+
             for {{$attendee->seat_category}} Seat
          </h1>
 
