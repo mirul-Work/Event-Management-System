@@ -7,6 +7,7 @@
 
 @section('title')
     <title>Organizer Dashboard</title>
+
 @endsection
 
 @section('role')
@@ -37,8 +38,7 @@
 
     <!-- Add New Event Button and Search Form -->
     <div class="flex flex-wrap items-center justify-between mb-4">
-        <a href="{{ route('organizer.events.create') }}"
-            class="btn btn-sm btn-warning">New
+        <a href="{{ route('organizer.events.create') }}" class="btn btn-sm btn-warning">New
             Event</a>
 
         <!-- Search Form -->
@@ -77,8 +77,8 @@
                 </thead>
                 <tbody class="divide-y divide-gray-200">
                     @foreach ($events as $index => $event)
-                    <tr class="border border-gray-300">
-                        <td class="px-4 py-2">{{ $index + 1 }}</td>
+                        <tr class="border border-gray-300">
+                            <td class="px-4 py-2">{{ $index + 1 }}</td>
                             <td class="px-4 py-2">{{ $event->name }}</td>
                             <td class="px-4 py-2">{{ $event->date }}</td>
                             <td class="px-4 py-2">{{ $event->location }}</td>
@@ -87,29 +87,29 @@
                             <td class="px-4 py-2">{{ $event->vvip_seat_available }}/ {{ $event->vvip_seats }}</td>
                             <td class="px-4 py-2">{{ $event->available_seats }} / {{ $event->total_seats }}</td>
                             <td class="py-2 px-4">
-                                <span class="px-2 py-1 text-md font-bold
-                                {{ $event->status === 'approved' ? 'text-green-500' : 'text-red-500'}}">
-                                {{ ucfirst($event->status) }}
+                                <span
+                                    class="px-2 py-1 text-md font-bold
+                                {{ $event->status === 'approved' ? 'text-green-500' : 'text-red-500' }}">
+                                    {{ ucfirst($event->status) }}
                                 </span>
                             </td>
                             <td class="px-4 py-2 space-x-1">
 
 
                                 <div class="dropdown">
-                                    <button
-                                        class="text-amber-500 dropdown-toggle"
-                                        type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown"
-                                        aria-expanded="false">
+                                    <button class="text-amber-500 dropdown-toggle" type="button" id="dropdownMenuButton1"
+                                        data-bs-toggle="dropdown" aria-expanded="false">
                                         <i class="bi bi-plus-circle-fill"></i>
                                     </button>
                                     <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
                                         <!-- Delete event form -->
                                         <li>
-                                            <form action="{{ route('organizer.events.destroy', $event->id) }}" method="POST" class="inline">
+                                            <form action="{{ route('organizer.events.destroy', $event->id) }}"
+                                                method="POST" class="inline">
                                                 @csrf
                                                 @method('DELETE')
                                                 <button type="submit" class="text-red-500 dropdown-item"
-                                                        onclick="return confirm('Are you sure you want to delete this event?')">
+                                                    onclick="return confirm('Are you sure you want to delete this event?')">
                                                     <i class="bi bi-trash-fill"></i> Delete
                                                 </button>
                                             </form>
@@ -117,21 +117,15 @@
 
                                         <!-- Edit event link -->
                                         <li>
-                                            <a class="text-amber-500 dropdown-item" href="{{ route('organizer.events.edit', $event->id) }}">
+                                            <a class="text-amber-500 dropdown-item"
+                                                href="{{ route('organizer.events.edit', $event->id) }}">
                                                 <i class="bi bi-pencil-square"></i> Edit
                                             </a>
                                         </li>
-
-                                        <!-- Create attendee link -->
-                                        <li>
-                                            <a class="text-blue-500 dropdown-item" href="{{ route('organizer.attendees.create', $event->id) }}">
-                                                <i class="bi bi-person-plus-fill"></i> Create Attendee
-                                            </a>
-                                        </li>
-
                                         <!-- List attendees link -->
                                         <li>
-                                            <a class="text-amber-500 dropdown-item" href="{{ route('organizer.attendees.showEventAttendees', $event->id) }}">
+                                            <a class="text-amber-500 dropdown-item"
+                                                href="{{ route('organizer.attendees.showEventAttendees', $event->id) }}">
                                                 <i class="bi bi-person-lines-fill"></i> List Attendees
                                             </a>
                                         </li>

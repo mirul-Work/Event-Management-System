@@ -1,3 +1,7 @@
+To add a phone number to the attendees table and make it nullable, you can update the CreateAttendeesTable migration by adding a nullable phone_number column.
+
+Here's how you can modify your migration:
+
 <?php
 
 use Illuminate\Database\Migrations\Migration;
@@ -16,11 +20,12 @@ class CreateAttendeesTable extends Migration
             $table->foreignId('user_id')
                 ->constrained('users') // Foreign key to the users table
                 ->onDelete('cascade');
-            $table->string('name'); //nama untuk attendee
-            $table->string('email'); // Seat category (regular, VIP, VVIP)
+            $table->string('name'); // Nama untuk attendee
+            $table->string('email')->nullable(); // Email address
             $table->enum('seat_category', ['regular', 'vip', 'vvip']); // Seat category (regular, VIP, VVIP)
             $table->enum('status', ['accepted', 'rejected', 'pending'])->default('pending'); // RSVP status
             $table->string('token', 64)->unique(); // Unique token for RSVP
+            $table->string('phone_number')->nullable(); // Nullable phone number
             $table->timestamps();
         });
     }

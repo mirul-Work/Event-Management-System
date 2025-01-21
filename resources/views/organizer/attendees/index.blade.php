@@ -46,6 +46,7 @@
                     <th class="py-2 px-4 text-left">Attendee ID</th>
                     <th class="py-2 px-4 text-left">Name</th>
                     <th class="py-2 px-4 text-left">Email</th>
+                    <th class="py-2 px-4 text-left">Phone Number</th>
                     <th class="py-2 px-4 text-left">Seat Type</th>
                     <th class="py-2 px-4 text-left">RSVP Link</th>
                     <th class="py-2 px-4 text-left">Status</th>
@@ -59,6 +60,7 @@
                         <td class="py-2 px-4">{{ $attendee->id }}</td>
                         <td class="py-2 px-4">{{ $attendee->name }}</td>
                         <td class="py-2 px-4">{{ $attendee->email }}</td>
+                        <td class="py-2 px-4">{{ $attendee->phone_number }}</td>
                         <td class="py-2 px-4 text-amber-500">{{ strtoupper($attendee->seat_category) }}</td>
                         <td class="py-2 px-4">
                             <a href="{{ url('/rsvp/' . $attendee->seat_category . '/' . $attendee->token) }}" class="text-blue-600 hover:underline">

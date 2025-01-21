@@ -24,7 +24,8 @@ class AdminDashboardController extends Controller
         // Validate the incoming data
         $validatedData = $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|email|max:255',
+            'email' => 'required|email|max:255|unique:users,email,' . Auth::id(),
+            'phone_number' => 'nullable|regex:/^([0-9\s\-\+\(\)]*)$/|max:15',
             'password' => 'nullable|confirmed|min:8', // Password is optional for update
         ]);
 
@@ -33,6 +34,8 @@ class AdminDashboardController extends Controller
         // Update the user's name and email
         $user->name = $validatedData['name'];
         $user->email = $validatedData['email'];
+        $user->phone_number = $validatedData['phone_number'] ?? null;
+
 
         // Update password if it's provided
         if ($request->filled('password')) {
@@ -42,6 +45,7 @@ class AdminDashboardController extends Controller
         $user->save();
 
         return redirect()->route('admin.profile')->with('success', 'Profile updated successfully.');
+
     }
 
 
@@ -66,7 +70,6 @@ class AdminDashboardController extends Controller
         // Count the related events>get();
 
         return view('admin.organizers.show-events', compact('events'));
-
     }
 
 
@@ -134,8 +137,4 @@ class AdminDashboardController extends Controller
 
         return redirect()->route('admin.organizers.index')->with('success', 'Organizer deleted successfully.');
     }
-
-
-
-
 }

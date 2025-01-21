@@ -38,14 +38,19 @@
             <input type="email" class="form-control mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500" id="email" name="email" value="{{ old('email', $user->email) }}" required>
         </div>
 
+        <div class="mb-3">
+            <label for="phone_number" class="block text-sm font-medium text-gray-700">Phone number (optional)</label>
+            <input type="text" id="phone_number" name="phone_number" class="form-control mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500" id="phone_number" name="phone_number" value="{{ old('phone_number', $user->phone_number) }}">
+        </div>
+
         <div class="mb-4">
             <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
-            <input type="password" class="form-control mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500" id="password" name="password" placeholder="Leave empty if not changing">
+            <input type="password" required class="form-control mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500" id="password" name="password" placeholder="Leave empty if not changing">
         </div>
 
         <div class="mb-4">
             <label for="password_confirmation" class="block text-sm font-medium text-gray-700">Confirm Password</label>
-            <input type="password" class="form-control mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500" id="password_confirmation" name="password_confirmation">
+            <input type="password" required class="form-control mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500" id="password_confirmation" name="password_confirmation">
         </div>
 
         <button type="submit" class="btn btn-warning">Update Profile</button>

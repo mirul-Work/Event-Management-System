@@ -46,6 +46,10 @@
         <label for="email">Attendee Email</label>
         <input type="email" class="form-control" id="email" name="email" required>
     </div>
+    <div class="form-group">
+        <label for="phone_number">Attendee Phone Number:</label>
+        <input type="phone_number" name="phone_number" id="phone_number" class="form-control">
+    </div>
 
     <div class="form-group">
         <label for="seat_category">Seat Category</label>

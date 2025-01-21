@@ -35,30 +35,34 @@ class OrganizerDashboardController extends Controller
     }
 
     // Update the organizer profile
-    public function updateProfile(Request $request)
-    {
-        // Validate the incoming data
-        $validatedData = $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|max:255',
-            'password' => 'nullable|confirmed|min:8', // Password is optional for update
-        ]);
+// Update the organizer profile
+public function updateProfile(Request $request)
+{
+    // Validate the incoming data
+    $validatedData = $request->validate([
+        'name' => 'required|string|max:255',
+        'email' => 'required|email|max:255|unique:users,email,' . Auth::id(),
+        'phone_number' => 'nullable|regex:/^([0-9\s\-\+\(\)]*)$/|max:15',
+        'password' => 'nullable|confirmed|min:8', // Password is optional for update
+    ]);
 
-        $user = Auth::user();
+    // Get the authenticated user
+    $user = Auth::user();
 
-        // Update the user's name and email
-        $user->name = $validatedData['name'];
-        $user->email = $validatedData['email'];
+    // Update the user's name, email, and phone number
+    $user->name = $validatedData['name'];
+    $user->email = $validatedData['email'];
+    $user->phone_number = $validatedData['phone_number'] ?? null;
 
-        // Update password if it's provided
-        if ($request->filled('password')) {
-            $user->password = bcrypt($validatedData['password']);
-        }
-
-        $user->save();
-
-        return redirect()->route('organizer.profile')->with('success', 'Profile updated successfully.');
+    // Update password if it's provided
+    if ($request->filled('password')) {
+        $user->password = bcrypt($validatedData['password']);
     }
+    // dd($request);
+
+    $user->save();
+    return redirect()->route('organizer.profile')->with('success', 'Profile updated successfully.');
+}
 
 
     //version 2
@@ -151,11 +155,4 @@ class OrganizerDashboardController extends Controller
 
         return redirect()->route('organizer.events.index')->with('success', 'Event deleted successfully!');
     }
-
-
 }
-
-
-
-
-

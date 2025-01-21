@@ -38,16 +38,22 @@
                 <button type="submit" onclick="return confirm('Are you sure you want to send all email?')"
                     class="btn btn-warning">Send All Emails</button>
             </form>
+            <a href="{{ route('organizer.attendees.import.form', $events->id) }}" type="submit"
+                class="btn btn-success">Import Attendee</a>
+            <a href="{{ route('organizer.attendees.create',$events->id) }}" type="submit"
+                class="btn btn-success">Create Attendee</a>
         </div>
 
         <div class="overflow-auto bg-white shadow-md rounded-lg">
             <table id="attendeesTable" class="min-w-full border-collapse border border-gray-200">
                 <thead class="bg-gray-100 text-gray-800">
                     <tr class="border border-gray-300">
+                        {{-- <th class="py-2 px-4 text-left">#</th> --}}
                         <th class="py-2 px-4 text-left">Event Name</th>
                         <th class="py-2 px-4 text-left">Attendee ID</th>
                         <th class="py-2 px-4 text-left">Name</th>
                         <th class="py-2 px-4 text-left">Email</th>
+                        <th class="py-2 px-4 text-left">Phone Number</th>
                         <th class="py-2 px-4 text-left">Seat Type</th>
                         <th class="py-2 px-4 text-left">RSVP Link</th>
                         <th class="py-2 px-4 text-left">Status</th>
@@ -62,6 +68,7 @@
                             <td class="py-2 px-4">{{ $attendee->id }}</td>
                             <td class="py-2 px-4">{{ $attendee->name }}</td>
                             <td class="py-2 px-4">{{ $attendee->email }}</td>
+                            <td class="py-2 px-4">{{ $attendee->phone_number }}</td>
                             <td class="py-2 px-4 text-amber-500">{{ ucfirst($attendee->seat_category) }}</td>
                             <td class="py-2 px-4">
                                 <a class="text-blue-600 hover:underline"
@@ -128,14 +135,14 @@
 
     <!-- DataTables initialization script -->
     <script>
-   if (document.getElementById("attendeesTable") && typeof simpleDatatables.DataTable !== 'undefined') {
-    const dataTable = new simpleDatatables.DataTable("#attendeesTable", {
-        searchable: true,
-        sortable: true,
-        paging: true,
-        perPage: 5,
-        perPageSelect: [5, 10, 15, 20, 25],
-    });
-}
+        if (document.getElementById("attendeesTable") && typeof simpleDatatables.DataTable !== 'undefined') {
+            const dataTable = new simpleDatatables.DataTable("#attendeesTable", {
+                searchable: true,
+                sortable: true,
+                paging: true,
+                perPage: 5,
+                perPageSelect: [5, 10, 15, 20, 25],
+            });
+        }
     </script>
 @endsection

@@ -1,4 +1,5 @@
 <?php
+
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\NavController;
 use App\Http\Controllers\AuthController;
@@ -75,7 +76,9 @@ Route::prefix('organizer')->name('organizer.')->middleware('auth:organizer')->gr
     Route::post('/organizer/events/{event}/attendees/manual', [AttendeeController::class, 'store'])->name('attendees.store');
     Route::get('/organizer/events/{id}/attendees', [AttendeeController::class, 'index'])->name('organizer.attendees.index');
     Route::post('/events/{event}/attendees/manual', [AttendeeController::class, 'addManual'])->name('attendees.addManual');
-    Route::post('/organizer/events/{event}/attendees/upload', [AttendeeController::class, 'uploadCSV'])->name('attendees.uploadCSV');
+
+    Route::get('/events/{event}/attendees/import', [AttendeeController::class, 'showImportForm'])->name('attendees.import.form');
+    Route::post('/events/{event}/attendees/import', [AttendeeController::class, 'import'])->name('attendees.import');
     Route::post('/events/{event}/attendees/{attendee}/send-email', [AttendeeController::class, 'sendEmail'])->name('attendees.sendEmail');
     // Route::post('/events/{event}/attendees/{attendee}/send-emails', [AttendeeController::class, 'sendEmailAll'])->name('attendees.sendEmailAll');
     Route::post('/events/{eventId}/attendees/send-emails', [AttendeeController::class, 'sendEmailAll'])->name('attendees.sendEmailAll');
@@ -93,9 +96,6 @@ Route::prefix('organizer')->name('organizer.')->middleware('auth:organizer')->gr
     Route::get('organizer/events/{eventId}/rsvp/{token}', [EventsController::class, 'handleRSVP'])->name('events.rsvp');
     Route::post('/organizer/events/{eventId}/send-invitations', [EventsController::class, 'sendInvitations'])
         ->name('emails.invitation');
-
-
-
 });
 
 
@@ -104,4 +104,3 @@ Route::prefix('organizer')->name('organizer.')->middleware('auth:organizer')->gr
 Route::get('rsvp/{seat_category}/{token}', [RSVPController::class, 'show'])->name('rsvp.show');
 Route::post('/rsvp/{seat_category}/{token}', [RsvpController::class, 'rsvp'])->name('rsvp.submit');
 Route::get('/already-responded/{seat_category}/{token}', [RsvpController::class, 'alreadyResponded'])->name('already.responded');
-

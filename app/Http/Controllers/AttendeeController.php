@@ -1,12 +1,14 @@
 <?php
 namespace App\Http\Controllers;
 
+use App\Imports\AttendeesImport;
 use App\Models\Events;
 use App\Models\Attendee;
 use App\Mail\InvitationMail;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
+use Maatwebsite\Excel\Facades\Excel;
 
 class AttendeeController extends Controller
 {
@@ -85,6 +87,7 @@ class AttendeeController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|max:255|unique:attendees,email,NULL,id,events_id,' . $event->id,
+            'phone_number' => 'nullable|regex:/^([0-9\s\-\+\(\)]*)$/|max:15',
             'seat_category' => 'required|in:regular,vip,vvip',
         ]);
 
@@ -117,6 +120,7 @@ class AttendeeController extends Controller
             'user_id' => $event->user_id,
             'name' => $validated['name'],
             'email' => $validated['email'],
+            'phone_number' => $validated['phone_number'],
             'seat_category' => $validated['seat_category'],
             'token' => $token,
             'status' => 'pending',
@@ -142,46 +146,73 @@ class AttendeeController extends Controller
             ->with('success', "Attendee added successfully! RSVP link: http://127.0.0.1:8000/rsvp/{$attendee->seat_category}/{$token}");
     }
 
-    // public function import(Request $request)
-    // {
-    //     $request->validate([
-    //         'file' => 'required|mimes:csv,xlsx,xls',
-    //         'event_id' => 'required|exists:events,id',
-    //     ]);
+    public function showImportForm($eventId)
+    {
+        $event = Events::findOrFail($eventId); // Retrieve the event by its ID
 
-    //     $eventId = $request->input('event_id');
+        return view('organizer.attendees.import', compact('event'));
+    }
 
-    //     Excel::import(new class($eventId) implements ToModel {
-    //         protected $eventId;
+    /**
+     * Handle the file import.
+     */
 
-    //         public function __construct($eventId)
-    //         {
-    //             $this->eventId = $eventId;
-    //         }
+public function import(Request $request, $eventId)
+{
+    $request->validate([
+        'file' => 'required|file|mimes:csv,txt,xlsx',
+    ]);
 
-    //         public function model(array $row)
-    //         {
-    //             return new Attendee([
-    //                 'name' => $row[0],
-    //                 'email' => $row[1],
-    //                 'phone' => $row[2],
-    //                 'event_id' => $this->eventId,
-    //             ]);
-    //         }
-    //     }, $request->file('file'));
+    $event = Events::findOrFail($eventId);
+    $user = Auth::user();  // Get the authenticated user
 
-    //     return redirect()->back()->with('success', 'Attendees imported successfully!');
-    // }
+    $attendees = Excel::toCollection(null, $request->file('file'));
+    $sheet = $attendees->first();
+    $dataRows = $sheet->slice(1);
 
+    $duplicateEmails = [];  // Array to store emails that were skipped
 
+    foreach ($dataRows as $row) {
+        // Generate a secure token using random_bytes (32-character hexadecimal string)
+        $token = bin2hex(random_bytes(16));  // 16 bytes = 32 characters in hex
 
+        // Check if the email already exists
+        $existingAttendee = Attendee::where('email', $row[1])->first();  // Check if email exists
+
+        if ($existingAttendee) {
+            // If the email already exists, log the duplicate and skip inserting
+            $duplicateEmails[] = $row[1];  // Store the duplicated email
+            continue;  // Skip this row and move to the next one
+        }
+
+        // Insert the attendee data and include the generated token
+        Attendee::create([
+            'name' => $row[0], // First column
+            'email' => $row[1], // Second column
+            'phone_number' => $row[2], // Third column
+            'seat_category' => $row[3], // Fourth column
+            'events_id' => $event->id, // Associate with the event
+            'user_id' => $user->id, // Associate with the authenticated user (organizer)
+            'token' => $token, // Provide the generated token
+        ]);
+    }
+
+    // If there were duplicate emails, generate a message to notify the user
+    if (!empty($duplicateEmails)) {
+        $duplicateEmailsList = implode(', ', $duplicateEmails);  // Join the emails with commas
+        return redirect()->back()->with('warning', "The following emails were duplicated and ignored: $duplicateEmailsList");
+    }
+
+    return redirect()->back()->with('success', 'Attendees imported successfully!');
+}
     /**
      * Display the specified resource.
      */
     public function showEventAttendees(string $id)
     {
         // $user = auth()->user(); // Get the authenticated user
-        $events = request('events_id');
+        // $events = request('events_id');
+        $events = Events::findOrFail($id);  // Fetch the event by ID
         $attendees = Attendee::where('events_id', $id)->paginate(10);
         return view('organizer.events.show-attendees', compact('attendees', 'events'));
 
@@ -189,25 +220,6 @@ class AttendeeController extends Controller
 
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        // Implement edit logic if needed
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        // Implement update logic if needed
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
 
 
     public function destroy($attendeeId)

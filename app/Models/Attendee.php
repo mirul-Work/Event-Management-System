@@ -17,6 +17,8 @@ class Attendee extends Model
         'seat_category',
         'token',
         'status',
+        'phone_number',
+
     ];
 
     // Attendee belongs to an event

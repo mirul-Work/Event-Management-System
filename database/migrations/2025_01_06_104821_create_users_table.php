@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('email')->unique();
+            $table->string('phone_number')->nullable(); // Nullable phone number
             $table->enum('role',['admin','organizer'])->default('organizer');
             $table->string('password');
             $table->timestamps();

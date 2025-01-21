@@ -24,7 +24,7 @@ class AuthController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email',
-            'password' => 'required|string|min:8|confirmed', // Ensure password confirmation
+            'phone_number' => 'nullable|string|max:15', // Validate phone number as nullable, with a max length            'password' => 'required|string|min:8|confirmed', // Ensure password confirmation
             'role' => 'required|in:admin,organizer,attende', // Ensure valid role
         ]);
 
@@ -32,6 +32,7 @@ class AuthController extends Controller
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
+            'phone_number' => $request->phone_number,
             'password' => Hash::make($request->password), // Encrypt the password
             'role' => $request->role, // Set the user role
         ]);
@@ -40,13 +41,13 @@ class AuthController extends Controller
         Auth::guard($request->role)->login($user);
 
         // Redirect to the appropriate dashboard based on role
-        if ($user->role === 'admin') {
-            return redirect('/admin/dashboard');
-        } elseif ($user->role === 'organizer') {
-            return redirect('/organizer/dashboard');
-        } else {
-            return redirect('/attende/dashboard');
-        }
+        // if ($user->role === 'admin') {
+        //     return redirect('/admin/dashboard');
+        // } elseif ($user->role === 'organizer') {
+        return redirect('/organizer/dashboard');
+        // } else {
+        //     return redirect('/attende/dashboard');
+        // }
     }
 
 
@@ -84,7 +85,7 @@ class AuthController extends Controller
         } else if (Auth::guard('attende')->check()) {
             Auth::guard('attende')->logout();
         }
-        return redirect(route('login'))->with('info','Logged Out');
+        return redirect(route('login'))->with('info', 'Logged Out');
     }
 
     //forgot
@@ -131,9 +132,4 @@ class AuthController extends Controller
     {
         return view('auth.reset', ['token' => $token]);
     }
-
-
-
-
-
 }
