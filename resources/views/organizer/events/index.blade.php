@@ -98,19 +98,20 @@
 
 
                                 <div class="dropdown">
-                                    <button class="text-amber-500 dropdown-toggle" type="button" id="dropdownMenuButton1"
-                                        data-bs-toggle="dropdown" aria-expanded="false">
+                                    <button
+                                        class="text-amber-500 dropdown-toggle"
+                                        type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown"
+                                        aria-expanded="false">
                                         <i class="bi bi-plus-circle-fill"></i>
                                     </button>
                                     <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
                                         <!-- Delete event form -->
                                         <li>
-                                            <form action="{{ route('organizer.events.destroy', $event->id) }}"
-                                                method="POST" class="inline">
+                                            <form action="{{ route('organizer.events.destroy', $event->id) }}" method="POST" class="inline">
                                                 @csrf
                                                 @method('DELETE')
                                                 <button type="submit" class="text-red-500 dropdown-item"
-                                                    onclick="return confirm('Are you sure you want to delete this event?')">
+                                                        onclick="return confirm('Are you sure you want to delete this event?')">
                                                     <i class="bi bi-trash-fill"></i> Delete
                                                 </button>
                                             </form>
@@ -118,15 +119,21 @@
 
                                         <!-- Edit event link -->
                                         <li>
-                                            <a class="text-amber-500 dropdown-item"
-                                                href="{{ route('organizer.events.edit', $event->id) }}">
+                                            <a class="text-amber-500 dropdown-item" href="{{ route('organizer.events.edit', $event->id) }}">
                                                 <i class="bi bi-pencil-square"></i> Edit
                                             </a>
                                         </li>
+
+                                        <!-- Create attendee link -->
+                                        <li>
+                                            <a class="text-blue-500 dropdown-item" href="{{ route('organizer.attendees.create', $event->id) }}">
+                                                <i class="bi bi-person-plus-fill"></i> Create Attendee
+                                            </a>
+                                        </li>
+
                                         <!-- List attendees link -->
                                         <li>
-                                            <a class="text-amber-500 dropdown-item"
-                                                href="{{ route('organizer.attendees.showEventAttendees', $event->id) }}">
+                                            <a class="text-amber-500 dropdown-item" href="{{ route('organizer.attendees.showEventAttendees', $event->id) }}">
                                                 <i class="bi bi-person-lines-fill"></i> List Attendees
                                             </a>
                                         </li>
