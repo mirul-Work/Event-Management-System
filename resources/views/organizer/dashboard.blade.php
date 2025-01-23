@@ -41,30 +41,30 @@
         @endif
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <!-- Manage Users Card -->
+            {{-- <!-- Manage Users Card -->
             <div class="card text-white bg-blue-600 rounded-lg shadow-lg">
                 <div class="card-body p-6">
                     <h5 class="text-xl font-semibold">Manage Profile</h5>
                     <p class="text-sm mt-2">Go to your profile page</p>
                     <a href="{{ route('organizer.profile') }}" class="mt-4 inline-block px-4 py-2 bg-white text-blue-600 rounded-lg">Manage Profile</a>
                 </div>
-            </div>
+            </div> --}}
 
             <!-- Manage Organizers Card -->
             <div class="card text-white bg-yellow-500 rounded-lg shadow-lg">
                 <div class="card-body p-6">
-                    <h5 class="text-xl font-semibold">Total Attendees : {{ $attendees->count() }}</h5>
-                    <p class="text-sm mt-2">Go to Attendees</p>
-                    <a href="{{route('organizer.attendees.index',['user_id' => Auth::user()->id])}}" class="mt-4 inline-block px-4 py-2 bg-white text-yellow-600 rounded-lg">Manage Attendees</a>
+                    <h5 class="text-xl font-semibold text-black">Total Attendees : {{ $attendees->count() }}</h5>
+                    <p class="text-sm mt-2 text-black">Go to Attendees</p>
+                    <a href="{{route('organizer.attendees.index',['user_id' => Auth::user()->id])}}" class="mt-4 inline-block px-4 py-2 bg-yellow-600 hover:bg-yellow-300 text-black rounded-lg">Manage Attendees</a>
                 </div>
             </div>
 
             <!-- Manage Events Card -->
-            <div class="card text-white bg-green-600 rounded-lg shadow-lg">
+            <div class="card text-white bg-green-500 rounded-lg shadow-lg">
                 <div class="card-body p-6">
-                    <h5 class="text-xl font-semibold">Total Event: {{ $events->count() }}</h5>
-                    <p class="text-sm mt-2">Go to Events</p>
-                    <a href="{{ route('organizer.events.index') }}" class="mt-4 inline-block px-4 py-2 bg-white text-green-600 rounded-lg">Manage Events</a>
+                    <h5 class="text-xl font-semibold text-black">Total Events: {{ $events->count() }}</h5>
+                    <p class="text-sm mt-2 text-black">Go to Events</p>
+                    <a href="{{ route('organizer.events.index') }}" class="mt-4 inline-block px-4 py-2 bg-green-600 hover:bg-green-300 text-black rounded-lg">Manage Events</a>
                 </div>
             </div>
         </div>
