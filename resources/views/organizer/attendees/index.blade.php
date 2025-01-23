@@ -16,7 +16,7 @@
 @endsection
 
 @section('content-dashboard')
-    <h1 class="text-2xl font-bold text-gray-700">Total Attendees: {{ $attendees->total() }}</h1>
+    <h1 class="text-2xl font-bold">Total Attendees: {{ $attendees->total() }}</h1>
 
     @if ($attendees->isEmpty())
         <div class="alert alert-info">No Attendee Found{{ session('info') }}</div>

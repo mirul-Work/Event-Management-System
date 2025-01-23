@@ -19,8 +19,8 @@
 @endsection
 
 @section('content-dashboard')
-    <h1 class="text-2xl font-bold mb-4 text-gray-800">Total Events: {{ $events->total() }}</h1>
-    <a href="{{ route('organizer.events.create') }}" class="btn btn-sm btn-warning">New
+    <h1 class="text-2xl font-bold mb-4">Total Events: {{ $events->total() }}</h1>
+    <a href="{{ route('organizer.events.create') }}" class="btn btn-md btn-warning">New
         Event</a>
 
     {{-- Total Attendees Count --}}

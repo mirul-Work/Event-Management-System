@@ -14,7 +14,10 @@
 
 @section('content-dashboard')
 
-    <h1 class="text-2xl font-bold text-gray-700">Total Attendees: {{ $attendees->total() }}</h1>
+    <h1 class="text-2xl font-bold">Total Attendees: {{ $attendees->total() }}</h1>
+    <h2 class="text-2xl font-bold text-gray-500">Pending : {{ $attendees_pending->total() }}</h2>
+    <h2 class="text-2xl font-bold text-green-500">Accepted : {{ $attendees_accepted->total() }}</h2>
+    <h2 class="text-2xl font-bold text-red-500">Rejected : {{ $attendees_rejected->total() }}</h2>
 
     @if (session('success'))
         <div class="alert alert-success">{{ session('success') }}</div>

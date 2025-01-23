@@ -209,14 +209,34 @@ class AttendeeController extends Controller
      */
     public function showEventAttendees(string $id)
     {
-        // $user = auth()->user(); // Get the authenticated user
-        // $events = request('events_id');
-        $events = Events::findOrFail($id);  // Fetch the event by ID
+        $pending = 'pending';
+        $accepted = 'accepted';
+        $rejected = 'rejected';
+
+        // Fetch the event by ID
+        $events = Events::findOrFail($id);
+
+        // Get all attendees for the event (pagination)
         $attendees = Attendee::where('events_id', $id)->paginate(10);
-        return view('organizer.events.show-attendees', compact('attendees', 'events'));
+
+        // Get attendees with 'pending' status (pagination)
+        $attendees_pending = Attendee::where('events_id', $id)->where('status', $pending)->paginate(10);
+
+        // Get attendees with 'accepted' status (pagination)
+        $attendees_accepted = Attendee::where('events_id', $id)->where('status', $accepted)->paginate(10);
+
+        // Get attendees with 'rejected' status (pagination)
+        $attendees_rejected = Attendee::where('events_id', $id)->where('status', $rejected)->paginate(10);
+
+        // Return the view with the necessary data
+        return view('organizer.events.show-attendees', compact(
+            'attendees',
+            'attendees_pending',
+            'attendees_accepted',
+            'attendees_rejected',
+            'events'
+        ));
     }
-
-
 
     public function destroy($attendeeId)
     {

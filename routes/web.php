@@ -13,7 +13,6 @@ use App\Http\Controllers\OrganizerDashboardController;
 
 //Home Route
 Route::get('/', [NavController::class, 'ReturnHome'])->name('home');
-
 //login route
 Route::get('/login', [AuthController::class, 'index'])->name('login')->middleware('guest');
 Route::post('/login', [AuthController::class, 'verify'])->name('auth.verify');
@@ -26,8 +25,6 @@ Route::get('password/reset', [AuthController::class, 'indexReset'])->name('passw
 Route::post('password/email', [AuthController::class, 'sendResetLinkEmail'])->name('password.email');
 Route::get('password/reset/{token}', [AuthController::class, 'showResetPasswordForm'])->name('password.reset');
 Route::post('password/reset', [AuthController::class, 'reset'])->name('password.update');
-
-//dashboard
 // Admin Routes
 Route::prefix('admin')->name('admin.')->middleware('auth:admin')->group(function () {
     // Dashboard
@@ -55,18 +52,6 @@ Route::prefix('organizer')->name('organizer.')->middleware('auth:organizer')->gr
     Route::get('/dashboard', [OrganizerDashboardController::class, 'index'])->name('dashboard');
     Route::get('/profile', [OrganizerDashboardController::class, 'showProfile'])->name('profile');
     Route::post('/profile/update', [OrganizerDashboardController::class, 'updateProfile'])->name('profile.update');
-
-
-    //attendee
-    // Route::get('/attendes', [AttendeeController::class, 'indexAttendes'])->name('attendees.index');
-    // Route::get('/attendes/create', [AttendeeController::class, 'createAttende'])->name('attendees.create');
-    // Route::post('/attendes', [AttendeeController::class, 'storeAttende'])->name('attendees.store');
-    // Route::get('/attendes/{id}/edit', [AttendeeController::class, 'editAttende'])->name('attendees.edit');
-    // Route::put('/attendes/{id}', [AttendeeController::class, 'updateAttende'])->name('attendees.update');
-    // Route::delete('/attendes/{id}', [AttendeeController::class, 'deleteAttende'])->name('attendees.delete');
-    // Route::get('/attendes/manual', [AttendeeController::class, 'indexManual'])->name('attendees.add');
-
-    // Route::resource('attendees', AttendeeController::class);
     //attende controller
     Route::get('/attendees/{user_id}/', [AttendeeController::class, 'index'])->name('attendees.index');
     Route::get('/organizer/attendees/search', [AttendeeController::class, 'search'])->name('attendees.search');    Route::get('/events/attendees/{user_id}/', [AttendeeController::class, 'showEventAttendees'])->name('attendees.showEventAttendees');
@@ -75,15 +60,10 @@ Route::prefix('organizer')->name('organizer.')->middleware('auth:organizer')->gr
     Route::post('/organizer/events/{event}/attendees/manual', [AttendeeController::class, 'store'])->name('attendees.store');
     Route::get('/organizer/events/{id}/attendees', [AttendeeController::class, 'index'])->name('organizer.attendees.index');
     Route::post('/events/{event}/attendees/manual', [AttendeeController::class, 'addManual'])->name('attendees.addManual');
-
     Route::get('/events/{event}/attendees/import', [AttendeeController::class, 'showImportForm'])->name('attendees.import.form');
     Route::post('/events/{event}/attendees/import', [AttendeeController::class, 'import'])->name('attendees.import');
     Route::post('/events/{event}/attendees/{attendee}/send-email', [AttendeeController::class, 'sendEmail'])->name('attendees.sendEmail');
-    // Route::post('/events/{event}/attendees/{attendee}/send-emails', [AttendeeController::class, 'sendEmailAll'])->name('attendees.sendEmailAll');
     Route::post('/events/{eventId}/attendees/send-emails', [AttendeeController::class, 'sendEmailAll'])->name('attendees.sendEmailAll');
-
-
-
     //Event Controller
     Route::resource('events', EventsController::class); // You can adjust this as needed
     Route::post('events/{eventId}/upload-attendees', [EventsController::class, 'uploadAttendees'])->name('events.upload-attendees');
