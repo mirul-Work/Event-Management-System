@@ -90,13 +90,6 @@ class EventsController extends Controller
             'total_seats' => $totalSeats, // Store total seats in the database
         ]);
 
-
-
-        // // Generate seats for each category
-        // $this->generateSeats($event->id, 'vip', $validated['vip_seats']);
-        // $this->generateSeats($event->id, 'regular', $validated['regular_seats']);
-        // $this->generateSeats($event->id, 'vvip', $validated['vvip_seats']);
-
         return redirect()->route('organizer.events.index')
             ->with('success', 'Event created with seats and  availability successfully!');
     }
@@ -244,63 +237,6 @@ class EventsController extends Controller
         return view('organizer.events.show-attendees', compact('attendees', 'events'));
 
     }
-    // public function sendInvitations(Request $request, $events_id)
-    // {
-    //     // Retrieve the event
-    //     $event = Events::with('attendees.user')->findOrFail($events_id);
-
-    //     // Loop through attendees and send email
-    //     foreach ($event->attendees as $attendee) {
-    //         // Generate RSVP link
-    //         $rsvpLink = route('events.rsvp', [
-    //             'events_id' => $event->id,
-    //             'token' => $attendee->token,
-    //         ]);
-
-    //         // Send the email
-    //         Mail::to($attendee->user->email)->send(new SendInvitation($event_id, $rsvp_link));
-    //     }
-
-    //     return redirect()->route('organizer.events.show', $event->id)
-    //                      ->with('success', 'Invitations have been sent to attendees.');
-    // }
-
-
-    // public function uploadAttendees(Request $request, $eventId)
-    // {
-    //     $validator = Validator::make($request->all(), [
-    //         'csv_file' => 'required|mimes:csv,txt|max:10240', // File validation (CSV)
-    //     ]);
-
-    //     if ($validator->fails()) {
-    //         return redirect()->back()->withErrors($validator)->withInput();
-    //     }
-
-    //     // Load CSV file
-    //     $file = $request->file('csv_file');
-    //     $csvData = array_map('str_getcsv', file($file));
-
-    //     // Assuming the CSV has headers and each row contains an email address
-    //     foreach ($csvData as $row) {
-    //         $email = $row[0]; // Assuming email is the first column in the CSV file
-
-    //         // Check if the email exists in the users table
-    //         $user = User::where('email', $email)->first();
-
-    //         if ($user) {
-    //             // Add the attendee
-    //             Attendee::create([
-    //                 'event_id' => $eventId,
-    //                 'user_id' => $user->id,
-    //                 'seat_category' => 'regular', // Default seat category (can be modified)
-    //                 'status' => 'pending',
-    //             ]);
-    //         }
-    //     }
-
-    //     return redirect()->route('events.show', ['event' => $eventId])
-    //         ->with('success', 'Attendees uploaded successfully.');
-    // }
 
 
     public function uploadAttendees(Request $request, Events $event)
@@ -324,60 +260,6 @@ class EventsController extends Controller
 
         return redirect()->route('events.show', $event->id)->with('success', 'Attendees uploaded successfully.');
     }
-
-
-
-    // public function handleRSVP($eventId, $token)
-    // {
-    //     $attendee = Attendee::where('event_id', $eventId)
-    //         ->where('token', $token)
-    //         ->first();
-
-    //     if (!$attendee) {
-    //         abort(404, 'Invalid RSVP link');
-    //     }
-
-    //     // Show RSVP page where attendee can accept or reject the invitation
-    //     return view('events.rsvp', compact('attendee'));
-    // }
-
-    // public function submitRSVP(Request $request, $eventId, $token)
-    // {
-    //     $attendee = Attendee::where('event_id', $eventId)
-    //         ->where('token', $token)
-    //         ->first();
-
-    //     if (!$attendee) {
-    //         abort(404, 'Invalid RSVP link');
-    //     }
-
-    //     $attendee->status = $request->response === 'accepted' ? 'accepted' : 'rejected';
-    //     $attendee->save();
-
-    //     return redirect()->route('home')->with('success', 'Your RSVP has been submitted.');
-    // }
-
-    // public function rsvp(Request $request, Events $event)
-    // {
-    //     $attendee = Attendee::where('events_id', $event->id)
-    //         ->where('user_id', auth()->id())
-    //         ->first();
-
-    //     if (!$attendee) {
-    //         return redirect()->route('organizer.events.index')->with('error', 'Attendee not found.');
-    //     }
-
-    //     // Validate RSVP link matches the assigned seat type
-    //     if ($request->seat_category !== $attendee->seat_category) {
-    //         return redirect()->route('organizer.events.index')->with('error', 'Invalid RSVP link for your seat category.');
-    //     }
-
-    //     // Update RSVP status
-    //     $attendee->status = $request->input('status');
-    //     $attendee->save();
-
-    //     return redirect()->route('organizer.events.show', $event->id)->with('success', 'RSVP updated successfully.');
-    // }
 
 
 }

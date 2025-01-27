@@ -141,8 +141,7 @@ class AttendeeController extends Controller
         $event->save();
 
         // Redirect with RSVP link
-        return redirect()->route('organizer.events.index', $event->id)
-            ->with('success', "Attendee added successfully! RSVP link: http://127.0.0.1:8000/rsvp/{$attendee->seat_category}/{$token}");
+        return redirect()->back()->with('success', "Attendee added successfully! RSVP link: http://127.0.0.1:8000/rsvp/{$attendee->seat_category}/{$token}");
     }
 
     public function showImportForm($eventId)

@@ -6,7 +6,7 @@
 <body>
     <h1>You’re Invited to {{ $event->name }}</h1>
     <p>Hi {{ $attendee->name }},</p>
-    <p>You have been invited to the event <strong>{{ $event->name }}</strong> as a <strong>{{ ucfirst($attendee->seat_category) }}</strong>.</p>
+    <p>You have been invited to the event <strong>{{ $event->name }}</strong> as a <strong>{{ ucfirst($attendee->seat_category) }} Seater</strong>.</p>
     <p>Event Details:</p>
     <ul>
         <li>Date: {{ $event->date }}</li>

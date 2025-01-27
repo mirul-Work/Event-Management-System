@@ -20,28 +20,21 @@ class EventScheduler
 
     private function remindPendingRsvps()
     {
-        $pendingRsvps = Attendee::where('status', 'pending')
-            // ->whereNull('last_reminder_sent_at')
-            ->get();
+        $pendingRsvps = Attendee::where('status', 'pending')->get();
 
         foreach ($pendingRsvps as $rsvp) {
-            $attendee = $rsvp->user;
-            Notification::send($attendee, new EventReminder($rsvp->event, 'pending'));
+            Notification::send($rsvp, new EventReminder($rsvp, 'pending')); // Send to Attendee model
             $rsvp->update(['last_reminder_sent_at' => Carbon::now()]);
         }
     }
 
     private function remindAcceptedRsvps()
     {
-        $acceptedRsvps = Attendee::where('status', 'accepted')
-            ->whereHas('event', function ($query) {
-                $query->whereDate('date', '=', Carbon::tomorrow()->toDateString()); // Tomorrow's events
-            })
-            ->get();
-
-        foreach ($acceptedRsvps as $rsvp) {
-            $attendee = $rsvp->user;
-            Notification::send($attendee, new EventReminder($rsvp->event, 'accepted'));
+        // Send reminders to attendees who have accepted the RSVP
+        $acceptedRsvps = Attendee::where('status', 'accepted')->get();
+        foreach ($acceptedRsvps as $attendee) {
+            $attendee->notify(new EventReminder($attendee, 'accepted'));
+            $attendee->update(['last_reminder_sent_at' => now()]);
         }
     }
 }

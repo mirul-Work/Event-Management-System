@@ -9,6 +9,9 @@ class Events extends Model
     use HasFactory;
 
     protected $primaryKey = 'id'; // Ensure it's 'id' unless using a custom key.
+    protected $casts = [
+        'date' => 'datetime',
+    ];
 
 
     // Fillable attributes for mass assignment

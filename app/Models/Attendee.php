@@ -3,10 +3,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Notifications\Notifiable;
 
 class Attendee extends Model
 {
-    use HasFactory;
+    use HasFactory, Notifiable;
 
     // Fillable attributes for mass assignment
     protected $fillable = [
@@ -32,4 +33,10 @@ class Attendee extends Model
     {
         return $this->belongsTo(User::class, 'user_id');
     }
+
+    public function routeNotificationForMail()
+{
+    return $this->email;
+}
+
 }

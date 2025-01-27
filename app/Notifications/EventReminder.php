@@ -2,7 +2,7 @@
 
 namespace App\Notifications;
 
-use App\Models\Events;
+use App\Models\Attendee;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
 use Illuminate\Notifications\Messages\MailMessage;
@@ -11,19 +11,19 @@ class EventReminder extends Notification
 {
     use Queueable;
 
-    public $event;
+    public $attendee;
     public $status;
 
     /**
      * Create a new notification instance.
      *
-     * @param  \App\Models\Events  $event
+     * @param  \App\Models\Attendee  $attendee
      * @param  string  $status
      * @return void
      */
-    public function __construct(Events $event, string $status)
+    public function __construct(Attendee $attendee, string $status)
     {
-        $this->event = $event;
+        $this->attendee = $attendee;
         $this->status = $status;
     }
 
@@ -35,7 +35,7 @@ class EventReminder extends Notification
      */
     public function via($notifiable)
     {
-        return ['mail'];  // You can add other channels like 'database', 'slack', etc.
+        return ['mail'];
     }
 
     /**
@@ -46,19 +46,20 @@ class EventReminder extends Notification
      */
     public function toMail($notifiable)
     {
+        $event = $this->attendee->event;
+        $seat = $this->attendee->seat_category;
+        $token = $this->attendee->token;
+
         $message = new MailMessage;
 
         if ($this->status === 'pending') {
-            // Reminder for pending RSVP
-            $message->subject('Please RSVP for the event!')
-                ->line('You have not yet responded to the event invitation for "' . $this->event->name . '". Please click below to respond.');
+            $message->subject('Please RSVP for the '.$event->name.' event!')
+                ->line('You have not yet responded to the event invitation for "' . $event->name . '" at '. $event->date->format('h:i A') .' Please click below to respond.')
+                ->action('RSVP Now', url('/rsvp/' . $seat . '/' . $token));
         } elseif ($this->status === 'accepted') {
-            // Reminder for accepted RSVP about the event tomorrow
-            $message->subject('Event Reminder: "' . $this->event->name . '" is Tomorrow!')
-                ->line('This is a reminder that you have accepted the invitation to attend the event tomorrow at ' . $this->event->date->format('h:i A') . '.');
+            $message->subject('Event Reminder: "' . $event->name . '" is Tomorrow!')
+                ->line('This is a reminder that you have accepted the invitation to attend the event tomorrow at ' . $event->date->format('h:i A') . '.');
         }
-
-        $message->action('RSVP Now', url('/events/' . $this->event->id . '/rsvp'));
 
         return $message;
     }

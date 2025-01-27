@@ -70,7 +70,7 @@ Route::prefix('organizer')->name('organizer.')->middleware('auth:organizer')->gr
     // Route::post('events/{event}/rsvp/{seat}', [EventsController::class, 'rsvp'])->name('rsvp');
     Route::get('events/{event}/rsvp', [EventsController::class, 'rsvp'])->name('rsvp');
     // Route::post('emails/invitation/{eventId}', [EventsController::class, 'sendInvitation'])->name('emails.invitation');
-    Route::post('emails/invitation/{eventId}', [InvitationController::class, 'sendInvitation'])->name('emails.invitation');
+    // Route::post('emails/invitation/{eventId}', [InvitationController::class, 'sendInvitation'])->name('emails.invitation');
     Route::get('events/{id}/links', [EventsController::class, 'showLinks'])->name('events.links');
     Route::get('organizer/events/{eventId}/rsvp/{token}', [EventsController::class, 'handleRSVP'])->name('events.rsvp');
     Route::post('/organizer/events/{eventId}/send-invitations', [EventsController::class, 'sendInvitations'])

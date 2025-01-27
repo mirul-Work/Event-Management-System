@@ -35,6 +35,9 @@
 @if (session('error'))
 <div class="alert alert-danger">{{ session('error') }}</div>
 @endif
+@if (session('success'))
+<div class="alert alert-success">{{ session('success') }}</div>
+@endif
 <form action="{{ route('organizer.attendees.store',$event->id) }}" method="POST">
     @csrf
     <div class="form-group">
@@ -63,7 +66,7 @@
 
     {{-- <input type="hidden" name="user_id" value="{{ auth()->id() }}"> --}}
     <button type="submit" class="btn btn-warning">Add Attendee</button>
-    <a href="{{ route('organizer.events.index') }}" class="btn btn-primary">Cancel</a>
+    <a href="{{ route('organizer.attendees.showEventAttendees', $event->id) }}" class="btn btn-primary">Cancel</a>
 </form>
 </div>
 
